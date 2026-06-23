@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Request, Response, NextFunction } from 'express'
 import cors from 'cors'
 
 import "dotenv/config"
@@ -26,6 +26,14 @@ async function startServer() {
     // Define a route to test the server
     app.get('/', (req, res) => {
       res.send('Hello World!');
+    });
+
+    // Global error handler
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      console.error('Unhandled error:', err);
+      const status = err.status || 500;
+      const message = err.message || 'Internal server error';
+      res.status(status).json({ error: message });
     });
 
     // Get port number from environment variables or default to 3000

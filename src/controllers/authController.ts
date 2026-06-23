@@ -18,6 +18,15 @@ interface LoginInput {
   password: string;
 }
 
+const getAdminStatus = (email: string | null | undefined): boolean => {
+  if (!email) {
+    return false
+  }
+
+  const adminEmails = process.env.ADMIN_EMAILS?.length ? process.env.ADMIN_EMAILS.split(",").map(e => e.trim().toLowerCase()) : []
+  return adminEmails.includes(email.toLowerCase())
+}
+
 function generateToken(userId: string) {
   const payload = { id: userId };
   const secretKey = process.env.JWT_SECRET;
@@ -72,13 +81,18 @@ async function registerUser(req: Request, res: Response) {
       },
     });
 
-    return res.status(201).json({ message: 'User registered successfully', user: newUser });
+    const { password: _, ...userWithoutPassword } = newUser;
+    const token = generateToken(newUser.id);
+    const userData = { ...userWithoutPassword, isAdmin: getAdminStatus(newUser.email) };
+    return res.status(201).json({ message: 'User registered successfully', user: userData, token });
   } catch (error) {
     console.error('Error registering user:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
 
+//login
+//POST /api/auth/login
 async function signin(req: Request, res: Response) {
   try {
     const { email, password }: LoginInput = req.body;

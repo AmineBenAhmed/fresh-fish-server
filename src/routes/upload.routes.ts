@@ -1,12 +1,13 @@
 import { Router } from 'express'
 import multer from 'multer'
 import cloudinary from '../config/cloudinary'
+import { authenticate } from '../middleware/auth'
 
 const router = Router()
 
 const upload = multer({ storage: multer.memoryStorage() })
 
-router.post('/image', upload.single('image'), async (req, res) => {
+router.post('/image', authenticate, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file provided' })

@@ -120,11 +120,14 @@ async function signin(req: Request, res: Response) {
     return res.status(200).json({
       message: 'Sign in successful',
       user: {
+        _id: user.id,
         id: user.id,
         name: user.name,
         email: user.email,
         phone: user.phone,
         avatar: user.avatar,
+        isAdmin: getAdminStatus(user.email),
+        createdAt: user.createdAt,
       },
       token,
     });
@@ -150,11 +153,54 @@ async function getMe(req: Request, res: Response) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    return res.status(200).json(user);
+    return res.status(200).json({
+      _id: user.id,
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      avatar: user.avatar,
+      isAdmin: getAdminStatus(user.email),
+      createdAt: user.createdAt,
+    });
   } catch (error) {
     console.error('Error fetching user:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
 
-export { registerUser, signin, getMe };
+async function updateUser(req: Request, res: Response) {
+  try {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { name, phone, avatar } = req.body;
+
+    const updated = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(phone !== undefined && { phone }),
+        ...(avatar !== undefined && { avatar }),
+      },
+    });
+
+    return res.status(200).json({
+      _id: updated.id,
+      id: updated.id,
+      name: updated.name,
+      email: updated.email,
+      phone: updated.phone,
+      avatar: updated.avatar,
+      isAdmin: getAdminStatus(updated.email),
+      createdAt: updated.createdAt,
+    });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+export { registerUser, signin, getMe, updateUser };

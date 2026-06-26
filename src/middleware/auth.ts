@@ -28,7 +28,7 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
       if (!partner) {
         return res.status(401).json({ error: 'Unauthorized' });
       }
-      (req as any).user = { id: decoded.id, isAdmin: false, isDeliveryPartner: true };
+      req.user = { id: decoded.id, isAdmin: false, isDeliveryPartner: true };
       return next();
     }
 
@@ -43,7 +43,7 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
       : [];
     const isAdmin = adminEmails.includes(user.email.toLowerCase());
 
-    (req as any).user = { id: decoded.id, isAdmin, isDeliveryPartner: false };
+    req.user = { id: decoded.id, isAdmin, isDeliveryPartner: false };
     next();
   } catch {
     return res.status(401).json({ error: 'Invalid or expired token' });

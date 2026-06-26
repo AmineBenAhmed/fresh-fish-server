@@ -5,6 +5,12 @@ import "dotenv/config"
 //import { initDB } from './config/db';
 
 import authRoutes from './routes/authRouter';
+import productRoutes from './routes/products.routes';
+import orderRoutes from './routes/orders.routes';
+import addressRoutes from './routes/addresses.routes';
+import deliveryPartnerRoutes from './routes/deliveryPartners.routes';
+import dashboardRoutes from './routes/dashboard.routes';
+import uploadRoutes from './routes/upload.routes';
 
 // Create an Express application
 const app = express();
@@ -22,6 +28,24 @@ async function startServer() {
 
     // Auth routes
     app.use('/api/auth', authRoutes);
+
+    // Product routes
+    app.use('/api/products', productRoutes);
+
+    // Order routes
+    app.use('/api/orders', orderRoutes);
+
+    // Address routes
+    app.use('/api/addresses', addressRoutes);
+
+    // Delivery Partner routes
+    app.use('/api/delivery-partners', deliveryPartnerRoutes);
+
+    // Dashboard routes
+    app.use('/api/dashboard', dashboardRoutes);
+
+    // Upload routes
+    app.use('/api/upload', uploadRoutes);
 
     // Define a route to test the server
     app.get('/', (req, res) => {

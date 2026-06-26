@@ -3,11 +3,11 @@ import multer from 'multer'
 import cloudinary from '../config/cloudinary'
 import { authenticate } from '../middleware/auth'
 
-const router = Router()
+const uploadRouter = Router()
 
 const upload = multer({ storage: multer.memoryStorage() })
 
-router.post('/image', authenticate, upload.single('image'), async (req, res) => {
+uploadRouter.post('/image', authenticate, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file provided' })
@@ -27,4 +27,4 @@ router.post('/image', authenticate, upload.single('image'), async (req, res) => 
   }
 })
 
-export default router
+export default uploadRouter

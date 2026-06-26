@@ -10,7 +10,7 @@ import orderRoutes from './routes/orders.routes';
 import addressRoutes from './routes/addresses.routes';
 import deliveryPartnerRoutes from './routes/deliveryPartners.routes';
 import dashboardRoutes from './routes/dashboard.routes';
-import uploadRoutes from './routes/upload.routes';
+import uploadRouter from './routes/upload.routes';
 
 // Create an Express application
 const app = express();
@@ -45,7 +45,7 @@ async function startServer() {
     app.use('/api/dashboard', dashboardRoutes);
 
     // Upload routes
-    app.use('/api/upload', uploadRoutes);
+    app.use('/api/upload', uploadRouter);
 
     // Define a route to test the server
     app.get('/', (req, res) => {
